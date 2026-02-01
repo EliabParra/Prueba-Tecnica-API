@@ -1,10 +1,13 @@
-﻿namespace Prueba_Tecnica.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Prueba_Tecnica.Models;
 
 public class ProductWarehouse
 {
     public int Id { get; set; }
     public int ProductId { get; set; }
     public int WarehouseId { get; set; }
+    [Range(0, int.MaxValue, ErrorMessage = "El stock no puede ser negativo")]
     public int CurrentStock { get; set; }
 
     public virtual Product Product { get; set; } = null!;
