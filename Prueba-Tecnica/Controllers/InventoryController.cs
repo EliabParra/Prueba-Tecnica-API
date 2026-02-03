@@ -43,5 +43,12 @@ namespace Prueba_Tecnica.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("dashboard")]
+        public async Task<ActionResult<DashboardStatsDTO>> GetDashboardStats()
+        {
+            var result = await _inventoryService.GetDashboardStatsAsync();
+            return Ok(result);
+        }
     }
 }

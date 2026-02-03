@@ -178,5 +178,32 @@ namespace Prueba_Tecnica.Services
                 _mapper.Map<InventoryReportDTO>(inMovement)
             };
         }
+
+        public async Task<DashboardStatsDTO> GetDashboardStatsAsync()
+        {
+            var totalProducts = await _context.Products.CountAsync(p => !p.IsDeleted);
+            var totalStock = await _context.ProductWarehouses
+                .SumAsync(pw => (int?)pw.CurrentStock) ?? 0;
+
+            var lowStockProducts = await _context.ProductWarehouses
+                .Where(pw => !pw.Product.IsDeleted)
+                .GroupBy(pw => new { pw.ProductId, pw.Product.Name, pw.Product.MinStock })
+                .Select(g => new LowStockProductDTO
+                {
+                    Name = g.Key.Name,
+                    MinStock = g.Key.MinStock,
+                    CurrentStock = g.Sum(x => x.CurrentStock)
+                })
+                .Where(dto => dto.CurrentStock <= dto.MinStock)
+                .ToListAsync();
+
+            return new DashboardStatsDTO
+            {
+                TotalProducts = totalProducts,
+                TotalStock = totalStock,
+                LowStockCount = lowStockProducts.Count,
+                LowStockProducts = lowStockProducts
+            };
+        }
     }
 }

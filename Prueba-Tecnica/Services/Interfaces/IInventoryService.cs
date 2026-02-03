@@ -7,5 +7,6 @@ namespace Prueba_Tecnica.Services.Interfaces
     {
         Task<InventoryReportDTO> RegisterMovementAsync(MovementRequestDTO dto);
         Task<IEnumerable<InventoryReportDTO>> RegisterTransferAsync(TransferRequestDTO dto);
+        Task<DashboardStatsDTO> GetDashboardStatsAsync();
     }
 }
