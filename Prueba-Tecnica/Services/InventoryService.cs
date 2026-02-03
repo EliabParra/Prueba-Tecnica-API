@@ -205,5 +205,38 @@ namespace Prueba_Tecnica.Services
                 LowStockProducts = lowStockProducts
             };
         }
+
+        public async Task<IEnumerable<InventoryStockDTO>> GetStockAsync(int? productId, int? warehouseId)
+        {
+            var query = _context.ProductWarehouses
+                .Include(pw => pw.Product)
+                .Include(pw => pw.Warehouse)
+                .Where(pw => !pw.Product.IsDeleted)
+                .AsQueryable();
+
+            if (productId.HasValue)
+            {
+                query = query.Where(pw => pw.ProductId == productId.Value);
+            }
+
+            if (warehouseId.HasValue)
+            {
+                query = query.Where(pw => pw.WarehouseId == warehouseId.Value);
+            }
+
+            return await query
+                .OrderBy(pw => pw.Product.Name)
+                .ThenBy(pw => pw.Warehouse.Name)
+                .Select(pw => new InventoryStockDTO
+                {
+                    ProductId = pw.ProductId,
+                    ProductName = pw.Product.Name,
+                    WarehouseId = pw.WarehouseId,
+                    WarehouseName = pw.Warehouse.Name,
+                    CurrentStock = pw.CurrentStock,
+                    MinStock = pw.Product.MinStock
+                })
+                .ToListAsync();
+        }
     }
 }

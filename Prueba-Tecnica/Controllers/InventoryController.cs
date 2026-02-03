@@ -50,5 +50,14 @@ namespace Prueba_Tecnica.Controllers
             var result = await _inventoryService.GetDashboardStatsAsync();
             return Ok(result);
         }
+
+        [HttpGet("stock")]
+        public async Task<ActionResult<IEnumerable<InventoryStockDTO>>> GetStock(
+            [FromQuery] int? productId,
+            [FromQuery] int? warehouseId)
+        {
+            var result = await _inventoryService.GetStockAsync(productId, warehouseId);
+            return Ok(result);
+        }
     }
 }
