@@ -26,9 +26,14 @@ namespace Prueba_Tecnica.Controllers
 
         [HttpGet("inventory/excel")]
         public async Task<IActionResult> ExportInventoryReportExcel(
-            [FromQuery] int? productId,
+            [FromQuery] int productId,
             [FromQuery] int? warehouseId)
         {
+            if (productId <= 0)
+            {
+                return BadRequest("El id del producto es obligatorio");
+            }
+
             var content = await _reportService.GetInventoryReportExcelAsync(productId, warehouseId);
             var fileName = $"reporte-inventario-{DateTime.Now:ddMMyyyyHHmmss}.xlsx";
             return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

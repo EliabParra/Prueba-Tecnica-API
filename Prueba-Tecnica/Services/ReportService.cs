@@ -42,8 +42,13 @@ namespace Prueba_Tecnica.Services
             return _mapper.Map<IEnumerable<InventoryReportDTO>>(movements);
         }
 
-        public async Task<byte[]> GetInventoryReportExcelAsync(int? productId, int? warehouseId)
+        public async Task<byte[]> GetInventoryReportExcelAsync(int productId, int? warehouseId)
         {
+            if (productId <= 0)
+            {
+                throw new ArgumentException("El id del producto debe ser positivo", nameof(productId));
+            }
+
             var report = await GetInventoryReportAsync(productId, warehouseId);
 
             using var workbook = new XLWorkbook();
