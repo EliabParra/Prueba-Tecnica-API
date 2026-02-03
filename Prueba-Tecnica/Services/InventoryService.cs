@@ -83,5 +83,100 @@ namespace Prueba_Tecnica.Services
 
             return _mapper.Map<InventoryReportDTO>(movement);
         }
+
+        public async Task<IEnumerable<InventoryReportDTO>> RegisterTransferAsync(TransferRequestDTO dto)
+        {
+            if (dto.Quantity <= 0)
+            {
+                throw new ArgumentException("La cantidad debe ser mayor a 0");
+            }
+
+            if (dto.SourceWarehouseId == dto.TargetWarehouseId)
+            {
+                throw new ArgumentException("Los almacenes de origen y destino deben ser diferentes");
+            }
+
+            var product = await _context.Products
+                .FirstOrDefaultAsync(p => p.Id == dto.ProductId && !p.IsDeleted);
+
+            if (product == null)
+            {
+                throw new InvalidOperationException("Producto no encontrado");
+            }
+
+            var sourceWarehouse = await _context.Warehouses.FindAsync(dto.SourceWarehouseId);
+            if (sourceWarehouse == null)
+            {
+                throw new InvalidOperationException("Producto no encontrado");
+            }
+
+            var targetWarehouse = await _context.Warehouses.FindAsync(dto.TargetWarehouseId);
+            if (targetWarehouse == null)
+            {
+                throw new InvalidOperationException("Almacen de destino no encontrado");
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            var sourceStock = await _context.ProductWarehouses
+                .FirstOrDefaultAsync(pw => pw.ProductId == dto.ProductId && pw.WarehouseId == dto.SourceWarehouseId);
+
+            if (sourceStock == null || sourceStock.CurrentStock < dto.Quantity)
+            {
+                throw new InvalidOperationException("Stock insuficiente para el traspaso");
+            }
+
+            var targetStock = await _context.ProductWarehouses
+                .FirstOrDefaultAsync(pw => pw.ProductId == dto.ProductId && pw.WarehouseId == dto.TargetWarehouseId);
+
+            if (targetStock == null)
+            {
+                targetStock = new ProductWarehouse
+                {
+                    ProductId = dto.ProductId,
+                    WarehouseId = dto.TargetWarehouseId,
+                    CurrentStock = 0
+                };
+                _context.ProductWarehouses.Add(targetStock);
+            }
+
+            sourceStock.CurrentStock -= dto.Quantity;
+            targetStock.CurrentStock += dto.Quantity;
+
+            var outMovement = new InventoryMovements
+            {
+                ProductId = dto.ProductId,
+                WarehouseId = dto.SourceWarehouseId,
+                MovementType = "OUT",
+                Quantity = dto.Quantity,
+                Description = "Transfer OUT"
+            };
+
+            var inMovement = new InventoryMovements
+            {
+                ProductId = dto.ProductId,
+                WarehouseId = dto.TargetWarehouseId,
+                MovementType = "IN",
+                Quantity = dto.Quantity,
+                Description = "Transfer IN"
+            };
+
+            _context.InventoryMovements.Add(outMovement);
+            _context.InventoryMovements.Add(inMovement);
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            await _context.Entry(outMovement).Reference(m => m.Product).LoadAsync();
+            await _context.Entry(outMovement).Reference(m => m.Warehouse).LoadAsync();
+            await _context.Entry(inMovement).Reference(m => m.Product).LoadAsync();
+            await _context.Entry(inMovement).Reference(m => m.Warehouse).LoadAsync();
+
+            return new[]
+            {
+                _mapper.Map<InventoryReportDTO>(outMovement),
+                _mapper.Map<InventoryReportDTO>(inMovement)
+            };
+        }
     }
 }

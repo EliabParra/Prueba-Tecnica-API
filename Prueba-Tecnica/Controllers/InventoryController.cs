@@ -29,5 +29,19 @@ namespace Prueba_Tecnica.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("transfer")]
+        public async Task<ActionResult<IEnumerable<InventoryReportDTO>>> RegisterTransfer(TransferRequestDTO dto)
+        {
+            try
+            {
+                var result = await _inventoryService.RegisterTransferAsync(dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
