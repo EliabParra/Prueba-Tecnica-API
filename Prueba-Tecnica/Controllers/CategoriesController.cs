@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Prueba_Tecnica.DTOs.Categories;
 using Prueba_Tecnica.Services.Interfaces;
 
 namespace Prueba_Tecnica.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/categories")]
     public class CategoriesController : ControllerBase
