@@ -25,6 +25,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
 
         CreateMap<CreateProductDTO, Product>();
+        CreateMap<UpdateProductDTO, Product>();
 
         CreateMap<MovementRequestDTO, InventoryMovements>()
             .ForMember(dest => dest.MovementDate, opt => opt.Ignore());
