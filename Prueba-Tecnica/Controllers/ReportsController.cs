@@ -37,7 +37,7 @@ namespace Prueba_Tecnica.Controllers
             }
 
             var content = await _reportService.GetInventoryReportExcelAsync(productId, warehouseId);
-            var fileName = $"reporte-inventario-{DateTime.Now:ddMMyyyyHHmmss}.xlsx";
+            var fileName = $"reporte-inventario-{DateTime.Now:ddMMyyyy_HHmmss}.xlsx";
             return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
     }

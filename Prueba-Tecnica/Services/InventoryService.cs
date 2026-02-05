@@ -121,9 +121,14 @@ namespace Prueba_Tecnica.Services
             var sourceStock = await _context.ProductWarehouses
                 .FirstOrDefaultAsync(pw => pw.ProductId == dto.ProductId && pw.WarehouseId == dto.SourceWarehouseId);
 
-            if (sourceStock == null || sourceStock.CurrentStock < dto.Quantity)
+            if (sourceStock == null)
             {
-                throw new InvalidOperationException("Stock insuficiente para el traspaso");
+                throw new InvalidOperationException("El almacen de origen no tiene el producto registrado");
+            }
+
+            if (sourceStock.CurrentStock < dto.Quantity)
+            {
+                throw new InvalidOperationException("Stock insuficiente para la transferencia.");
             }
 
             var targetStock = await _context.ProductWarehouses
