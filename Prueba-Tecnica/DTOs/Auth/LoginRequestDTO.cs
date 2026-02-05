@@ -4,9 +4,9 @@ namespace Prueba_Tecnica.DTOs.Auth;
 
 public class LoginRequestDTO
 {
-    [Required]
+    [Required(ErrorMessage = "El usuario es obligatorio.")]
     public string Username { get; set; } = null!;
 
-    [Required]
+    [Required(ErrorMessage = "La contraseña es obligatoria.")]
     public string Password { get; set; } = null!;
 }

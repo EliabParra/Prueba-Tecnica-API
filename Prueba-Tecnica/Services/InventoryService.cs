@@ -43,7 +43,7 @@ namespace Prueba_Tecnica.Services
             var warehouse = await _context.Warehouses.FindAsync(dto.WarehouseId);
             if (warehouse == null)
             {
-                throw new InvalidOperationException("Almacen no encontrado");
+                throw new InvalidOperationException("Almacén no encontrado");
             }
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
@@ -107,13 +107,13 @@ namespace Prueba_Tecnica.Services
             var sourceWarehouse = await _context.Warehouses.FindAsync(dto.SourceWarehouseId);
             if (sourceWarehouse == null)
             {
-                throw new InvalidOperationException("Producto no encontrado");
+                throw new InvalidOperationException("Almacén de origen no encontrado");
             }
 
             var targetWarehouse = await _context.Warehouses.FindAsync(dto.TargetWarehouseId);
             if (targetWarehouse == null)
             {
-                throw new InvalidOperationException("Almacen de destino no encontrado");
+                throw new InvalidOperationException("Almacén de destino no encontrado");
             }
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
@@ -123,7 +123,7 @@ namespace Prueba_Tecnica.Services
 
             if (sourceStock == null)
             {
-                throw new InvalidOperationException("El almacen de origen no tiene el producto registrado");
+                throw new InvalidOperationException("El almacén de origen no tiene el producto registrado");
             }
 
             if (sourceStock.CurrentStock < dto.Quantity)

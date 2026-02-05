@@ -4,8 +4,8 @@ namespace Prueba_Tecnica.DTOs.Warehouses;
 
 public class CreateWarehouseDTO
 {
-    [Required]
+    [Required(ErrorMessage = "El nombre es obligatorio.")]
     public string Name { get; set; } = null!;
-    [Required]
+    [Required(ErrorMessage = "La ubicación es obligatoria.")]
     public string Location { get; set; } = null!;
 }

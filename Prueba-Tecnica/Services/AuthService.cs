@@ -23,7 +23,7 @@ namespace Prueba_Tecnica.Services
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                throw new InvalidOperationException("JWT credentials are not configured.");
+                throw new InvalidOperationException("Las credenciales JWT no están configuradas.");
             }
 
             if (!string.Equals(dto.Username, username, StringComparison.Ordinal) ||
@@ -39,7 +39,7 @@ namespace Prueba_Tecnica.Services
 
             if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(issuer) || string.IsNullOrWhiteSpace(audience))
             {
-                throw new InvalidOperationException("JWT configuration is missing.");
+                throw new InvalidOperationException("La configuración JWT es inválida.");
             }
 
             var claims = new List<Claim>

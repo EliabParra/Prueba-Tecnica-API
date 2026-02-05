@@ -27,7 +27,7 @@ var jwtAudience = builder.Configuration["Jwt:Audience"];
 
 if (string.IsNullOrWhiteSpace(jwtKey) || string.IsNullOrWhiteSpace(jwtIssuer) || string.IsNullOrWhiteSpace(jwtAudience))
 {
-    throw new InvalidOperationException("JWT configuration is missing.");
+    throw new InvalidOperationException("La configuración JWT es obligatoria.");
 }
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
